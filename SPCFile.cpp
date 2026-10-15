@@ -52,8 +52,13 @@ bool SPCFile::Load()
 		mLoopSize[i]	= loopaddr-startaddr;
 		mIsLoop[i]		= checkbrrsize(&ramData[startaddr], &mSampleBytes[i]) == 1?true:false;
 		
-		if ( startaddr == 0 || startaddr == 0xffff ||
-			mLoopSize[i] < 0 || mSampleBytes[i] < mLoopSize[i] || (mLoopSize[i]%9) != 0 ) {
+		// ループポイントの検証は、実際にループする波形(末端ブロックにループ
+		// フラグがあるもの)に限る。Akao系(例: Romancing SaGa 3)のSPCは、
+		// ループしないワンショット波形のDIRにも範囲外のループアドレスが
+		// 残っていることがあり、それを不正として波形ごと捨てると、その
+		// 楽器が読み込まれず異常な発音(ノコギリ波状の音)になる。
+		if ( startaddr == 0 || startaddr == 0xffff || mLoopSize[i] < 0 ||
+			( mIsLoop[i] && ( mSampleBytes[i] < mLoopSize[i] || (mLoopSize[i]%9) != 0 ) ) ) {
 			mSampleBytes[i] = 0;
 		}
 	}
