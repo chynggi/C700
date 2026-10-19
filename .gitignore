@@ -1,5 +1,7 @@
 # Build outputs
 vc2015/x64/
+vc2015/Release/
+vc2015/Debug/
 vc2015/.vs/
 *.user
 
