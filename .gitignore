@@ -1,0 +1,7 @@
+# Build outputs
+vc2015/x64/
+vc2015/.vs/
+*.user
+
+# Third-party VST 2.4 SDK (not redistributed with this repository)
+vstsdk2.4/

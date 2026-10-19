@@ -37,7 +37,16 @@ bool SPCFile::Load()
     if (err) {
         return false;
     }
-    err = mSpcPlay.play(32000*5, NULL);   //ãÛìÆçÏÇ≥ÇπÇÈ
+    // The DIR register is normally already valid in an SPC snapshot. Running
+    // the emulated driver for a few seconds before sampling RAM can overwrite
+    // sample data (e.g. Akao/RS3 streams samples into ARAM), so only fall back
+    // to emulation when the snapshot has no usable DIR.
+    if (mSpcPlay.GetDspReg(0x5d) == 0) {
+        err = mSpcPlay.play(32000*5, NULL);   //ãÛìÆçÏÇ≥ÇπÇÈ
+        if (err) {
+            return false;
+        }
+    }
     unsigned char *ramData = mSpcPlay.GetRam();
 	
 	mSrcTableAddr = (int)mSpcPlay.GetDspReg(0x5d) << 8;
